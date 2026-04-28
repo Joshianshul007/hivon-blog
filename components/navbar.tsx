@@ -91,7 +91,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 font-bold text-xl tracking-tight">
           <PenSquare className="h-6 w-6 text-primary" />
           <span>Hivon Blog</span>
         </Link>
