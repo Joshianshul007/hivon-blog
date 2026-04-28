@@ -82,10 +82,12 @@ export function Navbar() {
   }, [])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    router.push("/")
-    router.refresh()
+    try {
+      await supabase.auth.signOut()
+    } finally {
+      setUser(null)
+      window.location.href = "/" // Force hard reload to clear all server cookies and states
+    }
   }
 
   return (
@@ -134,7 +136,10 @@ export function Navbar() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
+                <DropdownMenuItem onSelect={(e) => {
+                  e.preventDefault()
+                  handleSignOut()
+                }} className="cursor-pointer text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
