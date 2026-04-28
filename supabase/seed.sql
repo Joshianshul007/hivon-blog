@@ -1,0 +1,3 @@
+-- Seed data placeholder
+-- To promote a user to admin, run:
+-- UPDATE public.users SET role = 'admin' WHERE email = 'your-admin@example.com';

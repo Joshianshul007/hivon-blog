@@ -1,101 +1,138 @@
-import Image from "next/image";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { ArrowRight, PenSquare, Sparkles, Shield, MessageSquare } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
+import { PostCard } from "@/components/post-card"
 
-export default function Home() {
+export default async function HomePage() {
+  const supabase = await createClient()
+  const { data: recentPosts } = await supabase
+    .from("posts")
+    .select("id,title,summary,summary_status,image_url,created_at,author:users(name)")
+    .order("created_at", { ascending: false })
+    .limit(3)
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
+        <div className="container mx-auto px-4 py-24 md:py-32 relative">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+              Share Your Ideas with{" "}
+              <span className="text-primary">AI-Powered</span> Insights
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Hivon Blog is a modern blogging platform where every post gets an
+              AI-generated summary. Write, share, and discover content effortlessly.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" asChild>
+                <Link href="/signup">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/posts">Browse Posts</Link>
+              </Button>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </section>
+
+      {/* Features Section */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
+          Everything you need to blog
+        </h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <FeatureCard
+            icon={<PenSquare className="h-6 w-6" />}
+            title="Rich Post Editor"
+            description="Create beautiful blog posts with featured images and a clean editing experience."
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <FeatureCard
+            icon={<Sparkles className="h-6 w-6" />}
+            title="AI Summaries"
+            description="Every post automatically receives a 200-word AI-generated summary powered by Google Gemini."
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+          <FeatureCard
+            icon={<Shield className="h-6 w-6" />}
+            title="Role-Based Access"
+            description="Authors create posts, Viewers read & comment, Admins moderate everything."
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <FeatureCard
+            icon={<MessageSquare className="h-6 w-6" />}
+            title="Comments"
+            description="Engage with the community through a clean commenting system with moderation."
+          />
+        </div>
+      </section>
+
+      {/* Recent Posts Section */}
+      {recentPosts && recentPosts.length > 0 && (
+        <section className="container mx-auto px-4 py-20 border-t">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold">Recent Articles</h2>
+            <Button variant="ghost" asChild>
+              <Link href="/posts">
+                View all <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                summary={post.summary}
+                summary_status={post.summary_status}
+                image_url={post.image_url}
+                created_at={post.created_at}
+                author={post.author as unknown as { name: string } | null}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* CTA Section */}
+      <section className="border-t bg-muted/50">
+        <div className="container mx-auto px-4 py-16 text-center space-y-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Ready to start writing?</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Join Hivon Blog today and share your thoughts with the world.
+          </p>
+          <Button size="lg" asChild>
+            <Link href="/signup">
+              Create Your Account
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </section>
     </div>
-  );
+  )
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode
+  title: string
+  description: string
+}) {
+  return (
+    <div className="rounded-lg border bg-card p-6 space-y-3 transition-shadow hover:shadow-md">
+      <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary">
+        {icon}
+      </div>
+      <h3 className="font-semibold">{title}</h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+  )
 }
