@@ -33,11 +33,14 @@ export function Navbar() {
 
   useEffect(() => {
     const fetchProfile = async (authUser: SupabaseUser) => {
-      const { data: profile } = await supabase
+      console.log("Navbar: fetching profile for authUser:", authUser)
+      const { data: profile, error } = await supabase
         .from("users")
         .select("id,name,email,role")
         .eq("id", authUser.id)
         .single()
+      
+      console.log("Navbar: DB profile result:", profile, "Error:", error)
       
       if (profile) {
         // Guarantee name is not empty if DB row somehow has null name
