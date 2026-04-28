@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -31,7 +32,7 @@ export function Navbar() {
   const supabase = createClient()
 
   useEffect(() => {
-    const fetchProfile = async (authUser: any) => {
+    const fetchProfile = async (authUser: SupabaseUser) => {
       const { data: profile } = await supabase
         .from("users")
         .select("id,name,email,role")
