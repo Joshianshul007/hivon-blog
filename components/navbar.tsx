@@ -103,7 +103,7 @@ export function Navbar() {
           </Link>
 
           {loading ? (
-            <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
+            <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

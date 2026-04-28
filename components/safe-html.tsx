@@ -14,7 +14,14 @@ interface SafeHTMLProps {
  */
 export function SafeHTML({ html, className }: SafeHTMLProps) {
   const sanitized = useMemo(() => {
-    return DOMPurify.sanitize(html, {
+    // Add loading="lazy" to all images for performance
+    DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+      if ("tagName" in node && node.tagName.toLowerCase() === "img") {
+        node.setAttribute("loading", "lazy")
+      }
+    })
+
+    const result = DOMPurify.sanitize(html, {
       // Allow standard rich-text tags but block anything dangerous
       ALLOWED_TAGS: [
         "h1", "h2", "h3", "h4", "h5", "h6",
@@ -33,6 +40,10 @@ export function SafeHTML({ html, className }: SafeHTMLProps) {
       FORCE_BODY: true,
       ADD_ATTR: ["target"],
     })
+
+    // Clean up hook to avoid memory leaks
+    DOMPurify.removeHook("afterSanitizeAttributes")
+    return result
   }, [html])
 
   return (

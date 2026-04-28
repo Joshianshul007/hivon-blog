@@ -4,6 +4,8 @@ import { ArrowRight, PenSquare, Sparkles, Shield, MessageSquare } from "lucide-r
 import { createClient } from "@/lib/supabase/server"
 import { PostCard } from "@/components/post-card"
 
+export const revalidate = 60 // Cache page for 60 seconds
+
 export default async function HomePage() {
   const supabase = await createClient()
   const { data: recentPosts } = await supabase
@@ -71,16 +73,28 @@ export default async function HomePage() {
       </section>
 
       {/* Recent Posts Section */}
-      {recentPosts && recentPosts.length > 0 && (
-        <section className="container mx-auto px-4 py-20 border-t">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold">Recent Articles</h2>
+      <section className="container mx-auto px-4 py-20 border-t">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold">Recent Articles</h2>
+          {recentPosts && recentPosts.length > 0 && (
             <Button variant="ghost" asChild>
               <Link href="/posts">
                 View all <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
+          )}
+        </div>
+        
+        {!recentPosts || recentPosts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border bg-muted/30">
+            <PenSquare className="h-10 w-10 text-muted-foreground/50 mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No articles published yet</h3>
+            <p className="text-muted-foreground mb-6">Be the first to share your ideas with the world.</p>
+            <Button asChild>
+              <Link href="/signup">Write an Article</Link>
+            </Button>
           </div>
+        ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentPosts.map((post) => (
               <PostCard
@@ -95,8 +109,8 @@ export default async function HomePage() {
               />
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* CTA Section */}
       <section className="border-t bg-muted/50">

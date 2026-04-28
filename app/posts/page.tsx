@@ -1,6 +1,8 @@
 import { Suspense } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { PostCard } from "@/components/post-card"
+
+export const revalidate = 60 // Cache page for 60 seconds
 import { SearchBar } from "@/components/search-bar"
 import { Pagination } from "@/components/pagination"
 import type { Metadata } from "next"
