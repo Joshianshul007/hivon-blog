@@ -69,6 +69,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostDetailPage({ params }: PostPageProps) {
+  const supabase = await createClient()
   const user = await getCurrentUser()
   const { data: post, error } = await getPost(params.id)
 
