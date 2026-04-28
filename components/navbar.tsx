@@ -40,7 +40,12 @@ export function Navbar() {
         .single()
       
       if (profile) {
-        setUser(profile)
+        // Guarantee name is not empty if DB row somehow has null name
+        setUser({
+          ...profile,
+          name: profile.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || "User",
+          role: profile.role || "viewer"
+        })
       } else {
         // Fallback to auth metadata if DB row is missing or blocked by RLS
         setUser({
