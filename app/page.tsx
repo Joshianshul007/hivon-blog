@@ -1,13 +1,13 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, PenSquare, Sparkles, Shield, MessageSquare } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"
+import { getPublicClient } from "@/lib/supabase/server"
 import { PostCard } from "@/components/post-card"
 
 export const revalidate = 60 // Cache page for 60 seconds
 
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = getPublicClient()
   const { data: recentPosts } = await supabase
     .from("posts")
     .select("id,title,summary,summary_status,image_url,created_at,author:users(name)")

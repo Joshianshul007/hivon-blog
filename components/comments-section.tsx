@@ -1,6 +1,6 @@
 "use client"
 
-import { useOptimistic, startTransition } from "react"
+import { useOptimistic, startTransition, useCallback } from "react"
 import { CommentForm } from "./comment-form"
 import { CommentList } from "./comment-list"
 import Link from "next/link"
@@ -41,7 +41,7 @@ export function CommentsSection({
     }
   )
 
-  const onAdd = (text: string) => {
+  const onAdd = useCallback((text: string) => {
     const tempComment: Comment = {
       id: `temp-${Date.now()}`,
       comment_text: text,
@@ -52,13 +52,13 @@ export function CommentsSection({
     startTransition(() => {
       setOptimisticComments({ type: "add", comment: tempComment })
     })
-  }
+  }, [currentUserId, currentUserName, setOptimisticComments])
 
-  const onDelete = (id: string) => {
+  const onDelete = useCallback((id: string) => {
     startTransition(() => {
       setOptimisticComments({ type: "delete", id })
     })
-  }
+  }, [setOptimisticComments])
 
   return (
     <section className="mt-12 border-t pt-8 space-y-6">

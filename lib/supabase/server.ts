@@ -21,3 +21,13 @@ export const createClient = async () => {
     }
   )
 }
+
+// A cookie-free client for fetching public data (allows Next.js to cache the page statically)
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+
+export const getPublicClient = () => {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}

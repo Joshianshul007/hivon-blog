@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { createClient } from "@/lib/supabase/server"
+import { getPublicClient } from "@/lib/supabase/server"
 import { PostCard } from "@/components/post-card"
 
 export const revalidate = 60 // Cache page for 60 seconds
@@ -22,7 +22,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
   const search = searchParams.q || ""
   const page = Math.max(1, parseInt(searchParams.page || "1") || 1)
 
-  const supabase = await createClient()
+  const supabase = getPublicClient()
 
   let query = supabase
     .from("posts")

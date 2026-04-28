@@ -22,8 +22,8 @@ export default async function DashboardPage() {
   let commentsCount = 0
 
   if (user.role === "admin") {
-    const { count: pc } = await supabase.from("posts").select("*", { count: "exact", head: true })
-    const { count: cc } = await supabase.from("comments").select("*", { count: "exact", head: true })
+    const { count: pc } = await supabase.from("posts").select("*", { count: "estimated", head: true })
+    const { count: cc } = await supabase.from("comments").select("*", { count: "estimated", head: true })
     postsCount = pc || 0
     commentsCount = cc || 0
   } else if (user.role === "author") {

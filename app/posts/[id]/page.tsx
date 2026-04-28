@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentUser } from "@/lib/auth"
-import { CommentsSection } from "@/components/comments-section"
 import { Button } from "@/components/ui/button"
 import { notFound } from "next/navigation"
 import Image from "next/image"
@@ -8,21 +7,34 @@ import Link from "next/link"
 import { CalendarDays, User, Sparkles, ArrowLeft, Pencil, RefreshCw, Eye, Clock } from "lucide-react"
 import { ReadingProgress } from "@/components/reading-progress"
 import { ViewTracker } from "@/components/view-tracker"
-import { ShareButtons } from "@/components/share-buttons"
 import { SafeHTML } from "@/components/safe-html"
 import type { Metadata } from "next"
+import { cache } from "react"
+import dynamic from "next/dynamic"
+
+const ShareButtons = dynamic(() => import("@/components/share-buttons").then(mod => mod.ShareButtons), {
+  loading: () => <div className="h-10 w-full bg-muted animate-pulse rounded-md mt-6" />
+})
+
+const CommentsSection = dynamic(() => import("@/components/comments-section").then(mod => mod.CommentsSection), {
+  loading: () => <div className="h-40 w-full bg-muted animate-pulse rounded-md mt-12" />
+})
 
 interface PostPageProps {
   params: { id: string }
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+const getPost = cache(async (id: string) => {
   const supabase = await createClient()
-  const { data: post } = await supabase
+  return supabase
     .from("posts")
-    .select("title,summary,author:users(name)")
-    .eq("id", params.id)
+    .select("id,title,body,image_url,summary,summary_status,created_at,updated_at,author_id,views,author:users(name,email)")
+    .eq("id", id)
     .single()
+})
+
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { data: post } = await getPost(params.id)
 
   if (!post) return { title: "Post Not Found" }
 
@@ -57,14 +69,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostDetailPage({ params }: PostPageProps) {
-  const supabase = await createClient()
   const user = await getCurrentUser()
-
-  const { data: post, error } = await supabase
-    .from("posts")
-    .select("id,title,body,image_url,summary,summary_status,created_at,updated_at,author_id,views,author:users(name,email)")
-    .eq("id", params.id)
-    .single()
+  const { data: post, error } = await getPost(params.id)
 
   if (error || !post) {
     notFound()

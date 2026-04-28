@@ -18,6 +18,7 @@ export function SafeHTML({ html, className }: SafeHTMLProps) {
     DOMPurify.addHook("afterSanitizeAttributes", (node) => {
       if ("tagName" in node && node.tagName.toLowerCase() === "img") {
         node.setAttribute("loading", "lazy")
+        node.setAttribute("style", "max-width: 100%; height: auto;")
       }
     })
 
