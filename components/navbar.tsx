@@ -31,15 +31,30 @@ export function Navbar() {
   const supabase = createClient()
 
   useEffect(() => {
+    const fetchProfile = async (authUser: any) => {
+      const { data: profile } = await supabase
+        .from("users")
+        .select("id,name,email,role")
+        .eq("id", authUser.id)
+        .single()
+      
+      if (profile) {
+        setUser(profile)
+      } else {
+        // Fallback to auth metadata if DB row is missing or blocked by RLS
+        setUser({
+          id: authUser.id,
+          name: authUser.user_metadata?.name || "User",
+          email: authUser.email || "",
+          role: authUser.user_metadata?.role || "viewer",
+        })
+      }
+    }
+
     const getUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (authUser) {
-        const { data: profile } = await supabase
-          .from("users")
-          .select("id,name,email,role")
-          .eq("id", authUser.id)
-          .single()
-        setUser(profile)
+        await fetchProfile(authUser)
       }
       setLoading(false)
     }
@@ -47,12 +62,7 @@ export function Navbar() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
-        const { data: profile } = await supabase
-          .from("users")
-          .select("id,name,email,role")
-          .eq("id", session.user.id)
-          .single()
-        setUser(profile)
+        await fetchProfile(session.user)
       } else if (event === "SIGNED_OUT") {
         setUser(null)
       }
