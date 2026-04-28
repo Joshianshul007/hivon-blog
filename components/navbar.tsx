@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -28,7 +27,6 @@ export function Navbar() {
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
